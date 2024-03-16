@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Page</title>
+</head>
+<body>
+<h1>Downloading File...</h1>
+
+<div id="feedbacks"></div>
+
+<!-- Implementations may redirect to different HTMLs rather than the current one,
+ but all of them should use this script for sure. -->
+<script src="https://static.s.7c7.icu/js/download.js"></script>
+<script>
+    // 启动主函数
+    try {
+        main(function(feedback) {
+            // 将反馈的文本添加到页面中，作为日志
+            var newDiv = document.createElement('div');
+            let text = feedback.name + '...';
+            if (feedback.detail) {
+                text += ' ';
+                text += feedback.detail;
+            }
+            newDiv.innerText = text;
+            document.getElementById('feedbacks').appendChild(newDiv);
+        });
+    } catch (error) {
+        // 发生错误时弹出警告
+        alert('An error occurred: ' + error.message);
+    }
+</script>
+</body>
+</html>
