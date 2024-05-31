@@ -2,7 +2,7 @@
 const urlParams = new URLSearchParams(window.location.search);
 const meta = urlParams.get('meta');
 const slug = urlParams.get('slug');
-const password = urlParams.get('password');
+const password = window.location.hash;
 
 // 构建 META 数据的 URL
 const metaUrl = `${meta}/${slug[0]}/${slug}.json`;
