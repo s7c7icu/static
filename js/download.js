@@ -128,7 +128,7 @@ async function main(feedback) {
 
         // 计算文件的哈希值
         // 暂且先实现SHA512的部分
-        const fileHash = CryptoJS.SHA512(CryptoJS.lib.WordArray.create(fileData));
+        const fileHash = CryptoJS.SHA512(CryptoJS.lib.WordArray.create(fileData)).toString();
 
         // 检查哈希值是否与给定的相同
         if (!compareHash(fileHash, meta.hash)) {
