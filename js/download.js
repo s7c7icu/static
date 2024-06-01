@@ -4,6 +4,11 @@ const meta = urlParams.get('meta');
 const slug = urlParams.get('slug');
 const password = window.location.hash;
 
+// 尝试更改URL
+if (urlParamgs.get('src') && window.history && window.history.replaceState) {
+    window.history.replaceState({page: 'newstate'}, document.title, `${src}/${slug}#${password}`)
+}
+
 // 构建 META 数据的 URL
 const metaUrl = `${meta}/${slug[0]}/${slug}.json`;
 
