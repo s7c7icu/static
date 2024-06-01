@@ -174,11 +174,11 @@ const inflate = pako.inflate;
 // 密钥de-base64后，前8位是nonce，后32位是key
 function decrypt(buffer, password) {
     var rawPassword = Base64.toUint8Array(password);
-    var key = rawPassword.slice(8);
-    var nonce = rawPassword.slice(0, 8);
+    var key = rawPassword.slice(24);
+    var nonce = rawPassword.slice(0, 24);
 
     const box = nacl.secretbox;
-    return box.open(new Uint8Array(buffer).slice(8), nonce, key);
+    return box.open(new Uint8Array(buffer).slice(24), nonce, key);
 }
 
 
