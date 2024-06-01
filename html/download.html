@@ -19,7 +19,7 @@
 <script src="https://static.s.7c7.icu/js/download.js"></script>
 <script>
     // 启动主函数
-    try {
+    //try {
         main(function(feedback) {
             // 将反馈的文本添加到页面中，作为日志
             var newDiv = document.createElement('div');
@@ -31,10 +31,10 @@
             newDiv.innerText = text;
             document.getElementById('feedbacks').appendChild(newDiv);
         });
-    } catch (error) {
+    //} catch (error) {
         // 发生错误时弹出警告
-        alert('An error occurred: ' + error.message);
-    }
+    //    alert('An error occurred: ' + error.message);
+    //}
 </script>
 </body>
 </html>
