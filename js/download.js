@@ -6,7 +6,7 @@ const password = window.location.hash;
 
 // 尝试更改URL
 if (urlParams.get('src') && window.history && window.history.replaceState) {
-    window.history.replaceState({page: 'newstate'}, document.title, `${src}/${slug}#${password}`)
+    window.history.replaceState({page: 'newstate'}, document.title, `${urlParams.get('src')}/${slug}#${password}`)
 }
 
 // 构建 META 数据的 URL
