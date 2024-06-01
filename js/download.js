@@ -131,7 +131,7 @@ async function main(feedback) {
         const fileHash = CryptoJS.SHA512(CryptoJS.lib.WordArray.create(fileData)).toString();
 
         // 检查哈希值是否与给定的相同
-        if (!compareHash(fileHash, meta.hash)) {
+        if (!compareHash(fileHash, meta.hash.sha512)) {
             throw new Error('Hash mismatch: ' + `${fileHash} ≠ ${meta.hash.sha512}`);
         }
 
