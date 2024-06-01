@@ -131,7 +131,7 @@ async function main(feedback) {
 
         // 检查哈希值是否与给定的相同
         if (!compareHash(fileHash, meta.hash)) {
-            throw new Error('Hash mismatch');
+            throw new Error('Hash mismatch: ' + `${fileHash} ≠ ${meta.hash}`);
         }
 
         feedback({name: 'Downloading'});
