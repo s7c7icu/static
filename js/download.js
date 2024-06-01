@@ -138,7 +138,8 @@ async function main(feedback) {
         // 下载文件
         downloadFile(fileData, meta.filename || `${slug}.bin`);
     } catch (error) {
-        feedback({name: 'Error', detail: error.message + error.stack});
+        feedback({name: 'Error', detail: error.message});
+        throw error
     }
 }
 
