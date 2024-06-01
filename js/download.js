@@ -138,7 +138,7 @@ async function main(feedback) {
         // 下载文件
         downloadFile(fileData, meta.filename || `${slug}.bin`);
     } catch (error) {
-        console.error('Error:', error.message);
+        feedback({name: 'Error', detail: error.message});
     }
 }
 
@@ -178,7 +178,7 @@ function decrypt(buffer, password) {
     var nonce = rawPassword.slice(0, 8);
 
     const box = nacl.secretbox;
-    return box.open(new Uint8Array(buffer), nonce, key);
+    return box.open(new Uint8Array(buffer).slice(8), nonce, key);
 }
 
 
