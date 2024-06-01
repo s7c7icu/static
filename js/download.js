@@ -68,6 +68,29 @@ async function main(feedback) {
         // 获取算法和密码
         const algorithms = meta.alg.split('+').reverse();
 
+        // 将fileData转为二进制数据，使用latin1编码，以防二进制数据的丢失
+        fileData = (function (str) {
+            // 创建一个Uint8Array，其长度等于字符串的长度
+            const uint8Array = new Uint8Array(str.length);
+
+            // 遍历字符串中的每个字符
+            for (let i = 0; i < str.length; i++) {
+                // 使用charCodeAt获取字符的Unicode编码
+                const charCode = str.charCodeAt(i);
+
+                // 检查字符是否在latin1范围内
+                if (charCode > 0xFF) {
+                    throw new Error('String contains characters outside the latin1 range.');
+                }
+
+                // 使用位与操作获取单字节值
+                uint8Array[i] = charCode & 0xFF;
+            }
+
+            // 返回转换后的Uint8Array
+            return uint8Array;
+        })(fileData);
+
         // 逆向解码
         algorithms.forEach(algorithm => {
             switch (algorithm) {
@@ -98,7 +121,7 @@ async function main(feedback) {
         }
 
         // 计算文件的哈希值
-        const fileHash = await crypto.subtle.digest('SHA-512', new TextEncoder().encode(fileData));
+        const fileHash = CryptoJS.SHA512(CryptoJS.lib.WordArray.create(fileData));
 
         // 检查哈希值是否与给定的相同
         if (!compareHash(fileHash, meta.hash)) {
@@ -128,21 +151,28 @@ function validateMeta(meta) {
 }
 
 // 比较哈希值
-function compareHash(hash1, hash2) {
-    // 将哈希值转换为字符串
-    const hash1String = Array.from(new Uint8Array(hash1)).map(b => b.toString(16).padStart(2, '0')).join('');
-    const hash2String = hash2.replace(/-/g, '').toLowerCase();
-
-    // 比较哈希值是否相等
+function compareHash(hash1String, hash2String) {
     return hash1String === hash2String;
 }
 
 // 执行base64解码操作的函数
-async function base64Decode(base64EncodedData) {
-    const binaryString = atob(base64EncodedData);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes.buffer;
+function base64Decode(base64EncodedData) {
+    const buffer = base64EncodedData.toString('latin1');
+    return Base64.toUint8Array(buffer);
 }
+
+// inflate操作
+const inflate = pako.inflate;
+
+// AES decrypt，使用Salsa20算法
+// 密钥de-base64后，前8位是nonce，后32位是key
+function decrypt(buffer, password) {
+    var rawPassword = Base64.toUint8Array(password);
+    var key = rawPassword.slice(8);
+    var nonce = rawPassword.slice(0, 8);
+
+    const box = new nacl.secret.SecretBox(key);
+    return box.open(new Uint8Array(buffer), nonce);
+}
+
+
