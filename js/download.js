@@ -137,7 +137,7 @@ async function main(feedback) {
 
         feedback({name: 'Downloading'});
         // 下载文件
-        downloadFile(fileData, meta.filename ? Base64.decode(meta.filename) || `${slug}.bin`);
+        downloadFile(fileData, meta.filename ? Base64.decode(meta.filename) : `${slug}.bin`);
     } catch (error) {
         feedback({name: 'Error', detail: error.message + error.stack + ' *'});
         //throw error;
