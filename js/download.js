@@ -139,7 +139,7 @@ async function main(feedback) {
         downloadFile(fileData, meta.filename || `${slug}.bin`);
     } catch (error) {
         feedback({name: 'Error', detail: error.message});
-        throw error
+        throw error;
     }
 }
 
