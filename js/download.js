@@ -177,8 +177,8 @@ function decrypt(buffer, password) {
     var key = rawPassword.slice(8);
     var nonce = rawPassword.slice(0, 8);
 
-    const box = new nacl.secret.SecretBox(key);
-    return box.open(new Uint8Array(buffer), nonce);
+    const box = nacl.secretbox;
+    return box.open(new Uint8Array(buffer), nonce, key);
 }
 
 
