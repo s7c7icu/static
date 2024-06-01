@@ -58,16 +58,16 @@ async function main(feedback) {
             if (!response.ok) {
                 throw new Error('Failed to fetch file data');
             }
-            fileData = await response.arrayBuffer();
+            fileData = new Uint8Array(await response.arrayBuffer());
         } else if (meta.data.base64) {
             // 如果存在 base64 字段，则进行 base64 解码
-            fileData = base64Decode(meta.data.base64);
+            fileData = Base64.toUint8Array(meta.data.base64);
         } else if (meta.data.raw) {
             // 如果存在 raw 字段，则直接使用该字段的值
-            fileData = meta.data.raw;
+            fileData = new TextEncoder().encode(meta.data.raw);
         } else {
             // 否则视为空文件
-            fileData = '';
+            fileData = new Uint8Array();
         }
 
         feedback({name: 'Decrypting'});
@@ -75,7 +75,7 @@ async function main(feedback) {
         const algorithms = meta.alg.split('+').reverse();
 
         // 将fileData转为二进制数据，使用latin1编码，以防二进制数据的丢失
-        fileData = (function (str) {
+        /*fileData = (function (str) {
             // 创建一个Uint8Array，其长度等于字符串的长度
             const uint8Array = new Uint8Array(str.length);
 
@@ -95,7 +95,7 @@ async function main(feedback) {
 
             // 返回转换后的Uint8Array
             return uint8Array;
-        })(fileData);
+        })(fileData);*/
 
         // 逆向解码
         algorithms.forEach(algorithm => {
