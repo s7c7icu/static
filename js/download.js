@@ -5,7 +5,7 @@ const slug = urlParams.get('slug');
 const password = window.location.hash;
 
 // 尝试更改URL
-if (urlParamgs.get('src') && window.history && window.history.replaceState) {
+if (urlParams.get('src') && window.history && window.history.replaceState) {
     window.history.replaceState({page: 'newstate'}, document.title, `${src}/${slug}#${password}`)
 }
 
