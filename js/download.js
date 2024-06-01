@@ -165,9 +165,8 @@ function compareHash(hash1String, hash2String) {
 
 // 执行base64解码操作的函数
 function base64Decode(base64EncodedData) {
-    //const buffer = base64EncodedData.toString('latin1');
-    //return Base64.toUint8Array(buffer);
-    return Base64.toUint8Array(base64EncodedData);
+    const buffer = new TextDecoder('latin1').decode(base64EncodedData);
+    return Base64.toUint8Array(buffer);
 }
 
 // inflate操作
