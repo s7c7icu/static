@@ -127,11 +127,12 @@ async function main(feedback) {
         }
 
         // 计算文件的哈希值
+        // 暂且先实现SHA512的部分
         const fileHash = CryptoJS.SHA512(CryptoJS.lib.WordArray.create(fileData));
 
         // 检查哈希值是否与给定的相同
         if (!compareHash(fileHash, meta.hash)) {
-            throw new Error('Hash mismatch: ' + `${fileHash} ≠ ${meta.hash}`);
+            throw new Error('Hash mismatch: ' + `${fileHash} ≠ ${meta.hash.sha512}`);
         }
 
         feedback({name: 'Downloading'});
