@@ -21,22 +21,8 @@ async function getMeta() {
     }
     return response.json();
 }
-
-// 下载文件
-async function downloadFile(data, filename) {
-    const blob = new Blob([data]);
-    const url = window.URL.createObjectURL(blob);
-
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
-
 // 主函数
-async function main(feedback) {
+async function main(fileReceiver, feedback) {
     try {
         feedback({name: 'Acquiring Meta'});
         // 获取 META 数据
@@ -137,7 +123,7 @@ async function main(feedback) {
 
         feedback({name: 'Downloading'});
         // 下载文件
-        downloadFile(fileData, meta.filename ? Base64.decode(meta.filename) : `${slug}.bin`);
+        fileReceiver(fileData, meta.filename ? Base64.decode(meta.filename) : `${slug}.bin`);
     } catch (error) {
         feedback({name: 'Error', detail: error.message + error.stack + ' *'});
         //throw error;

@@ -18,9 +18,22 @@
 <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
 <script src="https://static.s.7c7.icu/js/download.js"></script>
 <script>
+
+    // 下载文件
+    async function downloadFile(data, filename) {
+        const blob = new Blob([data]);
+        const url = window.URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
     // 启动主函数
     //try {
-        main(function(feedback) {
+        main(function(downloadFile, feedback) {
             // 将反馈的文本添加到页面中，作为日志
             var newDiv = document.createElement('div');
             let text = feedback.name + '...';
