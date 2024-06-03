@@ -39,6 +39,7 @@
     
     // 启动主函数
     //try {
+    if (slug && meta && password)
         main({ meta, slug, password }, downloadFile, function(feedback) {
             // 将反馈的文本添加到页面中，作为日志
             var newDiv = document.createElement('div');
@@ -54,6 +55,10 @@
         // 发生错误时弹出警告
     //    alert('An error occurred: ' + error.message);
     //}
+    else {
+    	document.getElementById('feedbacks')
+    	    .appendChild('Please input a valid link')
+    }
 </script>
 </body>
 </html>
