@@ -8,7 +8,8 @@ if (urlParams.get('src') && window.history && window.history.replaceState) {
 const metaUrl = `${meta}/${slug[0]}/${slug}.json`;
 
 // 获取 META 数据
-async function getMeta() {
+async function getMeta(info) {
+    const { meta, slug, password } = info;
     const response = await fetch(metaUrl);
     if (!response.ok) {
         throw new Error('Failed to fetch meta data');
@@ -17,12 +18,10 @@ async function getMeta() {
 }
 // 主函数
 async function main(info, fileReceiver, feedback) {
-    const { meta, slug, password } = info;
-
     try {
         feedback({name: 'Acquiring Meta'});
         // 获取 META 数据
-        const meta = await getMeta();
+        const meta = await getMeta(info);
 
         feedback({name: 'Checking Meta'});
         // 检查 META 数据的合法性
