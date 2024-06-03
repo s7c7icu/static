@@ -87,7 +87,7 @@ async function main(info, fileReceiver, feedback) {
                     break;
                 case 'aes':
                     // 解密
-                    fileData = decrypt(fileData, password);
+                    fileData = decrypt(fileData, info.password);
                     break;
                 case 'base64':
                     // base64 解码
