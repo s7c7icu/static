@@ -123,7 +123,7 @@ async function main(fileReceiver, feedback) {
 
         feedback({name: 'Downloading'});
         // 下载文件
-        fileReceiver(fileData, meta.filename ? Base64.decode(meta.filename) : `${slug}.bin`);
+        fileReceiver(new Blob([fileData]), meta.filename ? Base64.decode(meta.filename) : `${slug}.bin`);
     } catch (error) {
         feedback({name: 'Error', detail: error.message + error.stack + ' *'});
         //throw error;

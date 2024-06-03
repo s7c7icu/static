@@ -20,8 +20,8 @@
 <script>
 
     // 下载文件
-    async function downloadFile(data, filename) {
-        const blob = new Blob([data]);
+    async function downloadFile(blob, filename) {
+        //const blob = new Blob([data]);
         const url = window.URL.createObjectURL(blob);
 
         const link = document.createElement('a');
