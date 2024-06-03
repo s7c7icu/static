@@ -12,7 +12,7 @@ async function getMeta(info) {
 
     const response = await fetch(metaUrl);
     if (!response.ok) {
-        throw new Error('Failed to fetch meta data');
+        throw new Error('Failed to fetch meta data: ' + await response.text());
     }
     return response.json();
 }
