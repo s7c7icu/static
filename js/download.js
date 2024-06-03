@@ -1,9 +1,3 @@
-// 解析 URL 中的 slug 和 password
-const urlParams = new URLSearchParams(window.location.search);
-const meta = urlParams.get('meta');
-const slug = urlParams.get('slug');
-const password = window.location.hash;
-
 // 尝试更改URL
 if (false)    // Buggy
 if (urlParams.get('src') && window.history && window.history.replaceState) {
@@ -22,7 +16,9 @@ async function getMeta() {
     return response.json();
 }
 // 主函数
-async function main(fileReceiver, feedback) {
+async function main(info, fileReceiver, feedback) {
+    const { meta, slug, password } = info;
+
     try {
         feedback({name: 'Acquiring Meta'});
         // 获取 META 数据

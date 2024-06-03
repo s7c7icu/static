@@ -31,9 +31,15 @@
         link.click();
         document.body.removeChild(link);
     }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const meta = urlParams.get('meta');
+    const slug = urlParams.get('slug');
+    const password = window.location.hash;
+    
     // 启动主函数
     //try {
-        main(downloadFile, function(feedback) {
+        main({ meta, slug, password }, downloadFile, function(feedback) {
             // 将反馈的文本添加到页面中，作为日志
             var newDiv = document.createElement('div');
             let text = feedback.name + '...';
