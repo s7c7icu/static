@@ -4,12 +4,12 @@ if (urlParams.get('src') && window.history && window.history.replaceState) {
     window.history.replaceState({page: 'newstate'}, document.title, `${urlParams.get('src')}/${slug}#${password}`)
 }
 
-// 构建 META 数据的 URL
-const metaUrl = `${meta}/${slug[0]}/${slug}.json`;
-
 // 获取 META 数据
 async function getMeta(info) {
     const { meta, slug, password } = info;
+    // 构建 META 数据的 URL
+    const metaUrl = `${meta}/${slug[0]}/${slug}.json`;
+
     const response = await fetch(metaUrl);
     if (!response.ok) {
         throw new Error('Failed to fetch meta data');
