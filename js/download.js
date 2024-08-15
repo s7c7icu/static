@@ -83,7 +83,7 @@ async function main(info, fileReceiver, feedback) {
             switch (algorithm) {
                 case 'deflate':
                     // 解压缩
-                    fileData = pako.inflate(fileData);
+                    fileData = inflate(fileData);
                     break;
                 case 'aes':
                     // 解密
