@@ -111,13 +111,12 @@
                 }
             }
 
-            // 计算文件的哈希值
-            // 暂且先实现SHA512的部分
-            const fileHash = CryptoJS.SHA512(CryptoJS.lib.WordArray.create(fileData)).toString();
-
             // 检查哈希值是否与给定的相同
-            if (!compareHash(fileHash, meta.hash.sha512)) {
-                throw new Error('Hash mismatch: ' + `${fileHash} ≠ ${meta.hash.sha512}`);
+            const hashingResult = compareHash(fileData, meta.hash);
+
+            if (hashingResult) {
+                if (hashingResult.unknownAlgorithm) throw new Error('Unknown algorithm: ' + hashingResult.alg);
+                throw new Error(`${hashingResult.alg} hash mismatch: expected ${hashingResult.expectedHash`, got ${hashingResult.calculatedHash});
             }
 
             feedback({name: 'Downloading'});
@@ -144,9 +143,41 @@
     }
 
     // 比较哈希值
-    function compareHash(hash1String, hash2String) {
-        return hash1String === hash2String;
-    }
+    const compareHash = (function() {
+        const sha3funcFactory = (outputLength) => (data) => CryptoJS.SHA3(data, { outputLength });
+        const knownHashAlgorithms = {
+            sha512: CryptoJS.SHA512,
+            sha256: CryptoJS.SHA256,
+            sha384: CryptoJS.SHA384,
+            sha3:   CryptoJS.SHA3,
+            sha3_256: sha3funcFactory(256),
+            sha3_384: sha3funcFactory(384)
+        };
+        const algorithmAlias = {
+            sha512: ['sha-512', 'sha_512'],
+            sha256: ['sha-256', 'sha_256'],
+            sha384: ['sha-384', 'sha_384'],
+            sha3: ['sha3-512', 'sha3_512'],
+            sha3_256: ['sha3-256'],
+            sha3_384: ['sha3-384']
+        };
+        for (const [key, aliases] of Object.entries(algorithmAlias)) {
+            aliases.forEach(alias => knownHashAlgorithms[alias] = knownHashAlgorithms[key]);
+        }
+
+        function compareHash(fileData, hashObject) {
+            for (const [alg, expectedHash] of Object.entries(hashObject)) {
+                const fun = knownHashAlgorithms[alg];
+                if (!fun) return { alg, expectedHash, calculatedHash: '0', unknownAlgorithm: true }
+                const calculatedHash = knownHashAlgorithms[alg](CryptoJS.lib.WordArray.create(fileData)).toString();
+                if (expectedHash !== calculatedHash) {
+                    return { alg, expectedHash, calculatedHash };
+                }
+            }
+        }
+
+        return compareHash;
+    })();
 
     // 执行base64解码操作的函数
     function base64Decode(base64EncodedData) {
