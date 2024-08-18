@@ -52,10 +52,10 @@ async function uploadFile(host, username /* future use */, verificationCode, fil
                 schema: 2,
                 alg,
                 size: file.size,
-                filename: base64Encode(file.name),
+                filename: await base64Encode(file.name),
                 hash: {
-                    sha256: calculateBlobHash(fileContent, 'SHA-256'),
-                    sha512: calculateBlobHash(fileContent, 'SHA-512')
+                    sha256: await calculateBlobHash(fileContent, 'SHA-256'),
+                    sha512: await calculateBlobHash(fileContent, 'SHA-512')
                 }
             };
 
