@@ -1,8 +1,4 @@
-// 尝试更改URL
-if (false)    // Buggy
-if (urlParams.get('src') && window.history && window.history.replaceState) {
-    window.history.replaceState({page: 'newstate'}, document.title, `${urlParams.get('src')}/${slug}#${password}`)
-}
+const SUPPORTED_MAX_SCHEMA = 2;
 
 // 获取 META 数据
 async function getMeta(info) {
@@ -87,6 +83,9 @@ async function main(info, fileReceiver, feedback) {
                     break;
                 case 'aes':
                     // 解密
+                    /* Schema 1 BEGIN: data中含有前导24位，当删 */
+                    if (meta.schema == 1) fileData = new Uint8Array(fileData).slice(24);
+                    /* Schema 1 END */
                     fileData = decrypt(fileData, info.password);
                     break;
                 case 'base64':
@@ -127,7 +126,7 @@ async function main(info, fileReceiver, feedback) {
 
 // 校验 META 数据的合法性
 function validateMeta(meta) {
-    if (!meta.schema || meta.schema !== 1) {
+    if (!meta.schema || typeof meta.schema !== 'number' || meta.schema <= 0 || meta.schema > SUPPORTED_MAX_SCHEMA) {
         return false;
     }
     if (!meta.alg || !meta.alg.includes('aes')) {
@@ -161,7 +160,7 @@ function decrypt(buffer, password) {
     var nonce = rawPassword.slice(0, 24);
 
     const box = nacl.secretbox;
-    return box.open(new Uint8Array(buffer).slice(24), nonce, key);
+    return box.open(new Uint8Array(buffer), nonce, key);
 }
 
 
