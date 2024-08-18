@@ -23,6 +23,7 @@
     No one but you know the passphrase, which is literally everything after <code>&sharp;</code> in the File URL.<br />
     So <b>do not share it</b> to someone who you don't trust. Otherwise, your file will be easily accessible to them.
 </div>
+<div id="errorPanel"></div>
 
 <script src="https://cdn.bootcdn.net/ajax/libs/pako/2.0.4/pako.min.js"></script>
 <script src="https://cdn.bootcdn.net/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
@@ -44,6 +45,8 @@
             return;
         }
 
+        document.getElementById('errorPanel').innerText = '';
+
         const username = document.getElementById('username').value;
         const verificationCode = document.getElementById('verificationCode').value;
 
@@ -51,6 +54,8 @@
             // 当上传成功时
             document.getElementById('urlDisplay').innerText = `Uploaded file URL: ${url}`;
             document.getElementById('postTips').style.display = 'block';    // make it visible
+        }, function (error) {
+            document.getElementById('errorPanel').innerText = error.message + '\n' + error.stack;
         });
     });
 </script>

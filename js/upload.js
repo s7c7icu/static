@@ -1,12 +1,28 @@
-async function uploadFile(host, username, verificationCode, file, onSuccess) {
+function combineArray(array1, array2) {
+    const combinedArray = new Uint8Array(array1.length + array2.length);
+    combinedArray.set(array1, 0);
+    combinedArray.set(array2, array1.length);
+    return combinedArray;
+}
+
+function isAllASCII(uint8Array) {
+    for (let i = 0; i < uint8Array.length; i++) {
+        if (uint8Array[i] > 127) {
+            return false; // 如果有任何字符超出 ASCII 范围，返回 false
+        }
+    }
+    return true; // 如果所有字符均在 ASCII 范围内，返回 true
+}
+
+async function uploadFile(host, username /* future use */, verificationCode, file, onSuccess) {
     try {
         // 验证用户身份和验证码
-        const authResponse = await fetch('https://upload.s.7c7.icu/auth', {
+        const authResponse = await fetch('https://upload.s.7c7.icu/api/auth', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username, verificationCode })
+            body: JSON.stringify({ username, code: verificationCode })
         });
 
         if (!authResponse.ok) {
@@ -18,57 +34,83 @@ async function uploadFile(host, username, verificationCode, file, onSuccess) {
         const authData = await authResponse.json();
         const token = authData.token;
 
-        const password = generateSecurePassword();
+        const [key, nonce] = [nacl.randomBytes(32), nacl.randomBytes(24)];
+        const password = Base64.fromUint8Array(combineArray(nonce, key));
+        
 
         // 读取文件内容
         const reader = new FileReader();
         reader.onload = async function() {
-            const fileContent = reader.result;
-            const alg = "deflate+aes+base64";
+            const fileContent = new Uint8Array(reader.result);
+            const alg = "deflate+aes";
 
             // 执行文件加密操作
-            const encryptedData = await encryptFile(fileContent, password, alg);
+            const encryptedData = await encryptFile(fileContent, key, nonce, alg);
 
             // 生成 meta
             const meta = {
-                schema: 1,
-                alg: alg,
+                schema: 2,
+                alg,
                 size: file.size,
                 filename: base64Encode(file.name),
                 hash: {
-                    sha256: calculateBlobHash(fileContent, 'SHA-256');
-                    sha512: calculateBlobHash(fileContent, 'SHA-512');
+                    sha256: calculateBlobHash(fileContent, 'SHA-256'),
+                    sha512: calculateBlobHash(fileContent, 'SHA-512')
                 }
             };
 
-            // 上传加密后的文件
-            const uploadResponse = await fetch('https://upload.s.7c7.icu/upload-file', {
+            // Upload Data
+            if (encryptedData.byteLength <= 4096) {
+                if (isAllASCII(encryptedData)) {
+                    meta.data = { raw: new TextDecoder('ascii').decode(encryptedData) };
+                } else {
+                    meta.data = { base64: Base64.encode(encryptedData) }
+                }
+            } else {
+                const dataResponse = await fetch('https://upload.s.7c7.icu/api/upload/data', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: new Blob([encryptedData])
+                });
+
+                if (!dataResponse.ok) {
+                    throw new Error('Failed to push data: ' + await dataResponse.text());
+                }
+
+                meta.data = { fetch: (await dataResponse.json()).fullUrl };
+            }
+
+            // Upload Meta
+            const metaResponse = await fetch('https://upload.s.7c7.icu/api/upload/meta', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    Authorization: 'Bearer ' + token
                 },
-                body: new Blob([base64Encode(JSON.stringify(meta)), '.', encryptedData])
+                body: new Blob([JSON.stringify(meta)])
             });
-
-            if (uploadResponse.ok) {
-                const slug = uploadResponse.json().slug;
-                const url = `${host}/${slug}#${password}`;
-                onSuccess(url);
-            } else {
-                console.error(`${uploadResponse.status} ${uploadResponse.statusText}: ${uploadResponse.json().message}`)
-                alert('An error occurred during file upload.');
+            if (!metaResponse.ok) {
+                throw new Error('Failed to push meta: ' + await metaResponse.text());
             }
+            
+            var slug = (await metaResponse.json()).slug;
+            var url = host + '/' + slug + '#' + password;
+            onSuccess(url);
         };
         reader.readAsArrayBuffer(file);
     } catch (error) {
         console.error('Error:', error);
         alert('An error occurred during file upload. Please try again.');
     }
-});
+};
 
 // 文件加密函数
-async function encryptFile(fileContent, password, operations) {
-    // 默认操作为 "deflate+aes+base64"
+/**
+ * @returns {Promise<Uint8Array>}
+ */
+async function encryptFile(fileContent, key, nonce, operations) {
+    // 默认操作为 "deflate+aes"
 
     // 根据操作执行文件加密操作
     let encryptedData = fileContent;
@@ -79,7 +121,7 @@ async function encryptFile(fileContent, password, operations) {
                 encryptedData = await deflateFile(encryptedData);
                 break;
             case "aes":
-                encryptedData = await aesEncrypt(encryptedData, password);
+                encryptedData = await aesEncrypt(encryptedData, key, nonce);
                 break;
             case "base64":
                 encryptedData = await base64Encode(encryptedData);
@@ -98,14 +140,14 @@ async function deflateFile(data) {
 }
 
 // 执行aes操作的函数
-async function aesEncrypt(data, password) {
-    const encryptedData = CryptoJS.AES.encrypt(data, password).toString();
+async function aesEncrypt(data, key, nonce) {
+    const encryptedData = nacl.secretbox(data, nonce, key);
     return encryptedData;
 }
 
 // 执行base64操作的函数
 async function base64Encode(data) {
-    const base64EncodedData = btoa(String.fromCharCode.apply(null, new Uint8Array(data)));
+    const base64EncodedData = Base64.toUint8Array(data);
     return base64EncodedData;
 }
 
