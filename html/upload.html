@@ -8,7 +8,7 @@
 </head>
 <body>
 <h1>File Upload</h1>
-<form id="uploadForm" enctype="multipart/form-data">
+<form id="uploadForm" enctype="multipart/form-data" autocomplete="off">
     <label for="fileInput">Choose file:</label>
     <input type="file" id="fileInput" name="file"><br><br>
     <label for="username">Username:</label>
@@ -25,8 +25,10 @@
 </div>
 <div id="errorPanel"></div>
 
-<script src="https://cdn.bootcdn.net/ajax/libs/pako/2.0.4/pako.min.js"></script>
-<script src="https://cdn.bootcdn.net/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako_inflate.es5.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.7/base64.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl-fast.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
 
 <script>
     const host = 'https://s.7c7.icu'; // 你的主机名
