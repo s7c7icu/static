@@ -15,9 +15,14 @@
     <input type="text" id="username" name="username"><br><br>
     <label for="verificationCode">Verification Code:</label>
     <input type="text" id="verificationCode" name="verificationCode"><br><br>
-    <button type="submit">Upload</button>
+    <button type="submit" id="submitForm">Upload</button>
 </form>
-<div id="urlDisplay"></div>
+<div class="clipboard-container" id='urlDisplay' style='display:none'>
+    <label for="textToCopy">Uploaded file URL: </label>
+    <input type="text" id="textToCopy" value="???" readonly>
+    <button id="copyButton">Copy to Clipboard</button>
+    <span id="copyMessage" class="hidden">Copied!</span>
+</div>
 <div style="display:none" id="postTips">
     <hr />Tips: Your file is encoded on the server. When downloading, decryption will perform locally.<br />
     No one but you know the passphrase, which is literally everything after <code>&sharp;</code> in the File URL.<br />
@@ -48,18 +53,49 @@
         }
 
         document.getElementById('errorPanel').innerText = '';
+        document.getElementById('urlDisplay').style.display = 'none';
+        document.getElementById('submitForm').classList.add('disabled');
 
         const username = document.getElementById('username').value;
         const verificationCode = document.getElementById('verificationCode').value;
 
         await uploadFile(host, username, verificationCode, file, function(url) {
             // 当上传成功时
-            document.getElementById('urlDisplay').innerText = `Uploaded file URL: ${url}`;
+            document.getElementById('textToCopy').value = url;
+            document.getElementById('urlDisplay').style.display = 'block';    // make it visible
             document.getElementById('postTips').style.display = 'block';    // make it visible
+
+            document.getElementById('submitForm').classList.remove('disabled');
         }, function (error) {
             document.getElementById('errorPanel').innerText = error.message + '\n' + error.stack;
+
+            document.getElementById('submitForm').classList.remove('disabled');
         });
     });
+
+    document.getElementById('copyButton').addEventListener('click', function() {
+        // 获取文本框元素
+        const textToCopy = document.getElementById('textToCopy');
+        
+        // 选择文本
+        textToCopy.select();
+        textToCopy.setSelectionRange(0, 99999); // 对于移动设备
+        
+        // 执行复制命令
+        document.execCommand('copy');
+        
+        // 显示复制成功的提示信息
+        const copyMessage = document.getElementById('copyMessage');
+        copyMessage.classList.remove('hidden');
+        copyMessage.classList.add('visible');
+        
+        // 设置3秒后隐藏提示信息
+        setTimeout(() => {
+            copyMessage.classList.remove('visible');
+            copyMessage.classList.add('hidden');
+        }, 3000);
+    });
+
 </script>
 <script src="https://static.s.7c7.icu/js/upload.js"></script>
 </body>

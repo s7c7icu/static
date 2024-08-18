@@ -11,6 +11,26 @@ body {
     color: #333;
     line-height: 1.6;
     padding: 20px;
+    text-align: center;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+.button {
+    display: inline-block;
+    background-color: #77cc77;
+    border: none;
+    color: #333;
+    padding: 15px 30px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-right: 10px;
 }
 
 /* Header styles */
@@ -77,4 +97,37 @@ h1 {
     background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
+}
+
+.clipboard-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#copyButton {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#copyButton:hover {
+    background-color: #45a049;
+}
+
+#copyMessage {
+    font-size: 14px;
+    color: green;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.visible {
+    visibility: visible;
 }
