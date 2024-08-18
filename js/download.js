@@ -116,7 +116,7 @@
 
             if (hashingResult) {
                 if (hashingResult.unknownAlgorithm) throw new Error('Unknown algorithm: ' + hashingResult.alg);
-                throw new Error(`${hashingResult.alg} hash mismatch: expected ${hashingResult.expectedHash`, got ${hashingResult.calculatedHash});
+                throw new Error(`${hashingResult.alg} hash mismatch: expected ${hashingResult.expectedHash}, got ${hashingResult.calculatedHash}`);
             }
 
             feedback({name: 'Downloading'});
