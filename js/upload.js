@@ -52,7 +52,7 @@ async function uploadFile(host, username /* future use */, verificationCode, fil
                 schema: 2,
                 alg,
                 size: file.size,
-                filename: await base64Encode(file.name),
+                filename: Base64.encode(file.name),
                 hash: {
                     sha256: await calculateBlobHash(fileContent, 'SHA-256'),
                     sha512: await calculateBlobHash(fileContent, 'SHA-512')
@@ -64,7 +64,7 @@ async function uploadFile(host, username /* future use */, verificationCode, fil
                 if (isAllASCII(encryptedData)) {
                     meta.data = { raw: new TextDecoder('ascii').decode(encryptedData) };
                 } else {
-                    meta.data = { base64: Base64.encode(encryptedData) }
+                    meta.data = { base64: Base64.fromUint8Array(encryptedData) }
                 }
             } else {
                 const dataResponse = await fetch('https://upload.s.7c7.icu/api/upload/data', {
@@ -147,8 +147,8 @@ async function aesEncrypt(data, key, nonce) {
 
 // 执行base64操作的函数
 async function base64Encode(data) {
-    const base64EncodedData = Base64.toUint8Array(data);
-    return base64EncodedData;
+    const base64EncodedData = Base64.fromUint8Array(data);
+    return new TextEncoder().encode(base64EncodedData);
 }
 
 function generateSecurePassword() {
