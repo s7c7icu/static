@@ -123,7 +123,7 @@
             // 下载文件
             fileReceiver(new Blob([fileData]), meta.filename ? Base64.decode(meta.filename) : `${slug}.bin`);
         } catch (error) {
-            feedback({name: 'Error', detail: error.message + error.stack + ' *'});
+            feedback({name: 'Error', detail: error.message + '\n' + error.stack + ' *'});
             //throw error;
         }
     }
