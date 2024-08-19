@@ -14,10 +14,10 @@ function isAllASCII(uint8Array) {
     return true; // 如果所有字符均在 ASCII 范围内，返回 true
 }
 
-async function uploadFile(host, username /* future use */, verificationCode, file, onSuccess) {
+async function uploadFile(host, apiRoot, username /* future use */, verificationCode, file, onSuccess) {
     try {
         // 验证用户身份和验证码
-        const authResponse = await fetch('https://upload.s.7c7.icu/api/auth', {
+        const authResponse = await fetch(apiRoot + '/api/auth', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -67,7 +67,7 @@ async function uploadFile(host, username /* future use */, verificationCode, fil
                     meta.data = { base64: Base64.fromUint8Array(encryptedData) }
                 }
             } else {
-                const dataResponse = await fetch('https://upload.s.7c7.icu/api/upload/data', {
+                const dataResponse = await fetch(apiRoot + '/api/upload/data', {
                     method: 'POST',
                     headers: {
                         'Authorization': 'Bearer ' + token
@@ -83,7 +83,7 @@ async function uploadFile(host, username /* future use */, verificationCode, fil
             }
 
             // Upload Meta
-            const metaResponse = await fetch('https://upload.s.7c7.icu/api/upload/meta', {
+            const metaResponse = await fetch(apiRoot + '/api/upload/meta', {
                 method: 'POST',
                 headers: {
                     Authorization: 'Bearer ' + token

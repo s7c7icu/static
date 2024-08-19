@@ -36,14 +36,22 @@
 <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
 
 <script>
-    const host = 'https://s.7c7.icu'; // 你的主机名
-
     let getRandomValues = function(values) {
         return window.crypto.getRandomValues(values);
     };
 
+    async function apiInfo() {
+    	const response = await fetch(window.location, { method: 'HEAD' });
+    	return {
+    		host: response.headers.get('X-S7c7icu-Host-URL'),
+    		apiRoot: response.headers.get('X-S7c7icu-Upload-API-Root')
+    	};
+    }
+
     document.getElementById('uploadForm').addEventListener('submit', async function(event) {
         event.preventDefault();
+
+        const { host, apiRoot } = await apiInfo();
 
         const fileInput = document.getElementById('fileInput');
         const file = fileInput.files[0];
@@ -59,7 +67,7 @@
         const username = document.getElementById('username').value;
         const verificationCode = document.getElementById('verificationCode').value;
 
-        await uploadFile(host, username, verificationCode, file, function(url) {
+        await uploadFile(host, apiRoot, username, verificationCode, file, function(url) {
             // 当上传成功时
             document.getElementById('textToCopy').value = url;
             document.getElementById('urlDisplay').style.display = 'block';    // make it visible
