@@ -48,7 +48,7 @@
             const token = authData.token;
     
             const [key, nonce] = [nacl.randomBytes(32), nacl.randomBytes(24)];
-            const password = Base64.fromUint8Array(combineArray(nonce, key));
+            const password = Base64.fromUint8Array(combineArray(nonce, key), true);
             
     
             // 读取文件内容
