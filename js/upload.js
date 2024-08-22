@@ -27,7 +27,19 @@
         return true; // 如果所有字符均在 ASCII 范围内，返回 true
     }
     
-    async function uploadFile(host, apiRoot, username /* future use */, verificationCode, file) {
+    /**
+     * 
+     * @param {string | null} host Download Portal, used in returned URL. If left `null`, returns an object
+     * containing `slug` and `pasword`.
+     * @param {string} apiRoot URL root of Upload API
+     * @param {string} username (for future use)
+     * @param {string | number} verificationCode TOTP verification code 
+     * @param {Blob} file The uploaded file
+     * @param {string} filename File name that is displayed on Meta
+     * @returns {string | { slug: string, password: string }} The download URL or an object containing
+     * `slug` and password.
+     */
+    async function uploadFile(host, apiRoot, username /* future use */, verificationCode, file, filename) {
         return new Promise(async (resolve, reject) => {
             try {
                 // 验证用户身份和验证码
@@ -66,7 +78,7 @@
                         schema: 2,
                         alg,
                         size: file.size,
-                        filename: Base64.encode(file.name),
+                        filename: Base64.encode(filename),
                         hash: {
                             sha256: await calculateBlobHash(fileContent, 'SHA-256'),
                             sha512: await calculateBlobHash(fileContent, 'SHA-512')

@@ -11,10 +11,16 @@
 <form id="uploadForm" enctype="multipart/form-data" autocomplete="off">
     <label for="fileInput">Choose file:</label>
     <input type="file" id="fileInput" name="file"><br><br>
+
+    <label for="customFileName">Custom file name (optional):</label>
+    <input type="text" id="customFileName" name="customFileName" placeholder="Enter custom file name"><br><br
+
     <label for="username">Username:</label>
     <input type="text" id="username" name="username"><br><br>
+
     <label for="verificationCode">Verification Code:</label>
     <input type="text" id="verificationCode" name="verificationCode"><br><br>
+
     <button type="submit" id="submitForm">Upload</button>
 </form>
 <div class="clipboard-container" id='urlDisplay' style='display:none'>
@@ -67,8 +73,9 @@
 
         const username = document.getElementById('username').value;
         const verificationCode = document.getElementById('verificationCode').value;
+        const customFileName = document.getElementById('customFileName').value || file.name;
 
-        uploadS7c7icu.uploadFile(host, apiRoot, username, verificationCode, file).then(function(url) {
+        uploadS7c7icu.uploadFile(host, apiRoot, username, verificationCode, file, filename).then(function(url) {
             // 当上传成功时
             document.getElementById('textToCopy').value = url;
             document.getElementById('urlDisplay').style.display = 'block';    // make it visible
