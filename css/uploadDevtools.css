@@ -82,8 +82,40 @@ button.disabled {
 
 .dev-tools-module {
     display: none;
+    margin: 20px 0;
 }
 
 .dev-tools-module.active {
     display: block;
+}
+
+.input-area, .output-area, .upload-area {
+    margin-bottom: 20px;
+}
+
+#jwtSecretBase64 {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+.hidden {
+    display: none;
+}
+
+#totpSecret, #jwtSecretBase64 {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+#qrcode {
+    margin-top: 20px;
+    text-align: center;
 }
