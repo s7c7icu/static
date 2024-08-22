@@ -67,7 +67,7 @@
         const username = document.getElementById('username').value;
         const verificationCode = document.getElementById('verificationCode').value;
 
-        await uploadS7c7icu.uploadFile(host, apiRoot, username, verificationCode, file, function(url) {
+        uploadS7c7icu.uploadFile(host, apiRoot, username, verificationCode, file).then(function(url) {
             // 当上传成功时
             document.getElementById('textToCopy').value = url;
             document.getElementById('urlDisplay').style.display = 'block';    // make it visible
@@ -78,7 +78,7 @@
             document.getElementById('errorPanel').innerText = error.message + '\n' + error.stack;
 
             document.getElementById('submitForm').classList.remove('disabled');
-        });
+        })
     });
 
     document.getElementById('copyButton').addEventListener('click', function() {
