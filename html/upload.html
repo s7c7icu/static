@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://static.s.7c7.icu/css/upload.css">
+    <link rel="stylesheet" href="https://static.s.7c7.icu/css/upload_v2.css">
     <title>File Upload</title>
 </head>
 <body>
@@ -24,7 +24,7 @@
     <span id="copyMessage" class="hidden">Copied!</span>
 </div>
 <div style="display:none" id="postTips">
-    <hr />Tips: Your file is encoded on the server. When downloading, decryption will perform locally.<br />
+    <hr />Tips: Your file is stored in endoed form on the server. When downloading, decryption will perform locally.<br />
     No one but you know the passphrase, which is literally everything after <code>&sharp;</code> in the File URL.<br />
     So <b>do not share it</b> to someone who you don't trust. Otherwise, your file will be easily accessible to them.
 </div>
@@ -62,6 +62,7 @@
 
         document.getElementById('errorPanel').innerText = '';
         document.getElementById('urlDisplay').style.display = 'none';
+        document.getElementById('postTips').style.display = 'none';
         document.getElementById('submitForm').classList.add('disabled');
 
         const username = document.getElementById('username').value;
