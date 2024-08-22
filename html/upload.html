@@ -73,7 +73,7 @@
 
         const username = document.getElementById('username').value;
         const verificationCode = document.getElementById('verificationCode').value;
-        const customFileName = document.getElementById('customFileName').value || file.name;
+        const filename = document.getElementById('customFileName').value || file.name;
 
         uploadS7c7icu.uploadFile(host, apiRoot, username, verificationCode, file, filename).then(function(url) {
             // 当上传成功时
