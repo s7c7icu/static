@@ -1,0 +1,89 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.input-area, .output-area {
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 20px;
+}
+
+textarea, input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button.disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.error {
+    color: #dc3545;
+    font-weight: bold;
+    margin-top: 20px;
+    display: none;
+}
+
+.output-container {
+    display: flex;
+    align-items: center;
+}
+
+.output-container input[type="text"] {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.output-container button {
+    background-color: #28a745;
+    margin-left: 10px;
+}
+
+.output-container button:hover {
+    background-color: #218838;
+}
+
+.output-area {
+    display: none;
+}
+
+.dev-tools-module {
+    display: none;
+}
+
+.dev-tools-module.active {
+    display: block;
+}
