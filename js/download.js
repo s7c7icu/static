@@ -41,6 +41,16 @@
         return response.json();
     }
     // 主函数
+    /**
+     * @param {{meta: string, slug: string, password: string}} info
+     * The information object of a file on the service.
+     * @param {function | null} fileReceiver The callback: `(blob, filename) => void`.
+     * @param {function} feedback Log receiver, with an `object` parameter, in which field
+     * `name` must be included. If `name` is `"error"` (case-insensitive) then it must be
+     * treated as an error.
+     * @returns {{blob: Blob, filename: string} | null} Null if `fileReceiver` is non-null,
+     * otherwise returns the object.
+    */
     async function main(info, fileReceiver, feedback) {
         try {
             feedback({name: 'Acquiring Meta'});
@@ -121,9 +131,15 @@
 
             feedback({name: 'Downloading'});
             // 下载文件
-            fileReceiver(new Blob([fileData]), meta.filename ? Base64.decode(meta.filename) : `${slug}.bin`);
+            const [blob, filename] = [new Blob([fileData]), meta.filename ? Base64.decode(meta.filename) : `${slug}.bin`];
+            if (!fileReceiver) return { blob, filename };
+            fileReceiver(blob, filename);
         } catch (error) {
-            feedback({name: 'Error', detail: error.message + '\n' + error.stack + ' *'});
+            feedback({
+                name: 'Error',
+                detail: error.message + '\n' + error.stack + ' *',
+                errorObject: error
+            });
             //throw error;
         }
     }
