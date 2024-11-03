@@ -120,3 +120,21 @@ button.disabled {
     margin-top: 20px;
     text-align: center;
 }
+
+/* CSS 样式 */
+.upload-area {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.input-group:first-child {
+    margin-right: 10px;
+}
+
