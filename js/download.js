@@ -123,7 +123,7 @@
 
             // 检查哈希值是否与给定的相同
             /* Schema 2 BEGIN: 未引入salter */
-            const hashingResult = compareHashSalted(fileData, meta.hash, schema < 3 ? null : meta.salter);
+            const hashingResult = compareHashSalted(fileData, meta.hash, meta.schema < 3 ? null : meta.salter);
             /* Schema 2 END */
 
             if (hashingResult) {
