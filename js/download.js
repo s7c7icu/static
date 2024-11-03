@@ -26,7 +26,7 @@
 
     // 你的模块代码在这里
 
-    const SUPPORTED_MAX_SCHEMA = 2;
+    const SUPPORTED_MAX_SCHEMA = 3;
 
     // 获取 META 数据
     async function getMeta(info) {
@@ -112,7 +112,9 @@
             }
 
             // 检查哈希值是否与给定的相同
-            const hashingResult = compareHash(fileData, meta.hash);
+            /* Schema 2 BEGIN: 未引入salter */
+            const hashingResult = compareHashSalted(fileData, meta.hash, schema < 3 ? null : meta.salter);
+            /* Schema 2 END */
 
             if (hashingResult) {
                 if (hashingResult.unknownAlgorithm) throw new Error('Unknown algorithm: ' + hashingResult.alg);
@@ -142,6 +144,26 @@
         return true;
     }
 
+    const salters = {
+        none: (_saltConf) => compareHash,
+        's7c7icu:postappend-v0': function(saltConf) {
+            let salt = Base64.toUint8Array(saltConf.salt);
+            return (fileData, hashObject) => {
+                let concated = new Uint8Array([...fileData, ...salt]);
+                return compareHash(concated, hashObject);
+            }
+        }
+    }
+    
+    const compareHashSalted = function(fileData, hashObject, salterObject) {
+        let salter = (function() {
+            if (!salterObject || !salterObject.name || !(salterObject.name in salters))
+                return salters.none;
+            return salters[salterObject.name];
+        })();
+        return salter(salterObject)(fileData, hashObject);
+    }
+
     // 比较哈希值
     const compareHash = (function() {
         const sha3funcFactory = (outputLength) => (data) => CryptoJS.SHA3(data, { outputLength });
@@ -165,7 +187,7 @@
             aliases.forEach(alias => knownHashAlgorithms[alias] = knownHashAlgorithms[key]);
         }
 
-        function compareHash(fileData, hashObject) {
+        function compareHash0(fileData, hashObject) {
             for (const [alg, expectedHash] of Object.entries(hashObject)) {
                 const fun = knownHashAlgorithms[alg];
                 if (!fun) return { alg, expectedHash, calculatedHash: '0', unknownAlgorithm: true }
@@ -176,7 +198,7 @@
             }
         }
 
-        return compareHash;
+        return compareHash0;
     })();
 
     // 执行base64解码操作的函数

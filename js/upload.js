@@ -11,12 +11,6 @@
     }
 }(typeof self !== 'undefined' ? self : this, function (pako, Base64, nacl, CryptoJS) {
     // Your module code here using pako, Base64, nacl, CryptoJS
-    function combineArray(array1, array2) {
-        const combinedArray = new Uint8Array(array1.length + array2.length);
-        combinedArray.set(array1, 0);
-        combinedArray.set(array2, array1.length);
-        return combinedArray;
-    }
     
     function isAllASCII(uint8Array) {
         for (let i = 0; i < uint8Array.length; i++) {
@@ -60,8 +54,8 @@
                 const authData = await authResponse.json();
                 const token = authData.token;
         
-                const [key, nonce] = [nacl.randomBytes(32), nacl.randomBytes(24)];
-                const password = Base64.fromUint8Array(combineArray(nonce, key), true);
+                const [key, nonce, salt] = [nacl.randomBytes(32), nacl.randomBytes(24), nacl.randomBytes(32)];
+                const password = Base64.fromUint8Array(new Uint8Array([...nonce, ...key]), true);
                 
         
                 // 读取文件内容
@@ -72,17 +66,22 @@
         
                     // 执行文件加密操作
                     const encryptedData = encryptFile(fileContent, key, nonce, alg);
+                    const saltedOriginalContent = new Uint8Array([...fileContent, ...salt]);
         
                     // 生成 meta
                     const meta = {
-                        schema: 2,
+                        schema: 3,
                         alg,
                         size: file.size,
                         filename: Base64.encode(filename),
                         hash: {
-                            sha256: await calculateBlobHash(fileContent, 'SHA-256'),
-                            sha512: await calculateBlobHash(fileContent, 'SHA-512')
-                        }
+                            sha256: await calculateBlobHash(saltedOriginalContent, 'SHA-256'),
+                            sha512: await calculateBlobHash(saltedOriginalContent, 'SHA-512')
+                        },
+                        salter: {
+                            name: 's7c7icu:postappend-v0',
+                            salt: Base64.fromUint8Array(salt),
+                        },
                     };
         
                     // Upload Data

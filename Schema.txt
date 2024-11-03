@@ -2,3 +2,5 @@
 
 #2: Removes trailing 24-bit of AES (Salsa20) encrypted
   output, in case leak of nonce.
+
+#3: Introduce salter
