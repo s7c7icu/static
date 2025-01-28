@@ -117,3 +117,12 @@ button.disabled {
     color: #dc3545;
     font-weight: bold;
 }
+
+textarea {
+    width: max(min(60ch, 95vw), 10ch);
+}
+
+.disabledOption {
+    pointer-events: none;
+    opacity: 0.6;
+}
