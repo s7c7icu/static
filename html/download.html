@@ -16,6 +16,7 @@
 <script src="https://cdn.jsdelivr.net/npm/js-base64@3.7.7/base64.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tweetnacl@1.0.3/nacl-fast.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.2.0/crypto-js.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 <script src="https://static.s.7c7.icu/js/download.js"></script>
 <script>
 
@@ -51,8 +52,11 @@
             document.getElementById('feedbacks').appendChild(newDiv);
         });
     else {
-    	document.getElementById('feedbacks')
-    	    .appendChild('Please input a valid link')
+    	document.getElementById('feedbacks').appendChild((function(s) {
+            const e = document.createElement('div');
+            e.innerText = s;
+            return e;
+        })('Please input a valid link'));
     }
 </script>
 </body>
