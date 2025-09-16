@@ -245,7 +245,7 @@
      */
     function readInt16(u8array) {
         // Big Endian
-        return new DataView(u8array.buffer, 0, 2).getInt16();
+        return new DataView(u8array.buffer, 0, 2).getUint16();
     }
 
     // 执行base64解码操作的函数

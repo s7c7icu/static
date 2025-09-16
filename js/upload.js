@@ -213,7 +213,7 @@
      */
     function setInt16(u8array, value, offset) {
         // Big Endian
-        new DataView(u8array.buffer, offset, 2).setInt16(0, value);
+        new DataView(u8array.buffer, offset, 2).setUint16(0, value);
     }
 
     return {
