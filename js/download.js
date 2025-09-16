@@ -175,7 +175,7 @@
             return false;
         }
         if (meta.schema >= 4) {
-            if (meta.flags && typeof meta.flags !== 'array') {
+            if (meta.flags && !Array.isArray(meta.flags)) {
                 return false;
             }
         }
