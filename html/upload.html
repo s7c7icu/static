@@ -21,6 +21,12 @@
     <label for="verificationCode">Verification Code:</label>
     <input type="text" id="verificationCode" name="verificationCode"><br><br>
 
+    <label for="prop_encryptFilename">Encrypt filename</label>
+    <input type="checkbox" checked id="prop_encryptFilename">
+
+    <label for="prop_asZipIndex">Mark as ZIP index</label>
+    <input type="checkbox" id="prop_asZipIndex">
+
     <button type="submit" id="submitForm">Upload</button>
 </form>
 <div class="clipboard-container" id='urlDisplay' style='display:none'>
@@ -75,7 +81,12 @@
         const verificationCode = document.getElementById('verificationCode').value;
         const filename = document.getElementById('customFileName').value || file.name;
 
-        uploadS7c7icu.uploadFile(host, apiRoot, username, verificationCode, file, filename).then(function(url) {
+        const properties = {
+            encryptFilename: document.getElementById('prop_encryptFilename').checked,
+            asZipIndex: document.getElementById('prop_asZipIndex').checked,
+        };
+
+        uploadS7c7icu.uploadFile(host, apiRoot, {username, code: verificationCode}, file, filename, properties).then(function(url) {
             // 当上传成功时
             document.getElementById('textToCopy').value = url;
             document.getElementById('urlDisplay').style.display = 'block';    // make it visible

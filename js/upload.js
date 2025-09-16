@@ -24,16 +24,16 @@
     /**
      * 
      * @param {string | null} host Download Portal, used in returned URL. If left `null`, returns an object
-     * containing `slug` and `pasword`.
+     * containing `slug` and `password`.
      * @param {string} apiRoot URL root of Upload API
-     * @param {string} username (for future use)
-     * @param {string | number} verificationCode TOTP verification code 
+     * @param {{username: string, code: string | number}} auth TOTP authentification
      * @param {Blob} file The uploaded file
      * @param {string} filename File name that is displayed on Meta
+     * @param {object} properties Extra properties
      * @returns {string | { slug: string, password: string }} The download URL or an object containing
      * `slug` and password.
      */
-    async function uploadFile(host, apiRoot, username /* future use */, verificationCode, file, filename) {
+    async function uploadFile(host, apiRoot, auth, file, filename, properties) {
         return new Promise(async (resolve, reject) => {
             try {
                 // 验证用户身份和验证码
@@ -42,7 +42,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, code: verificationCode })
+                    body: JSON.stringify(auth)
                 });
         
                 if (!authResponse.ok) {
@@ -63,14 +63,31 @@
                 reader.onload = async function() {
                     const fileContent = new Uint8Array(reader.result);
                     const alg = "deflate+aes";
+                    const flags = [];
+
+                    // Schema 4: encrypt filename
+                    let fileContentToEncrypt = fileContent;
+                    if (properties.encryptFilename) {
+                        const prefix = new Uint8Array([0, 0, ...Base64.toUint8Array(filename)]);
+                        setInt16(prefix, prefix.byteLength - 2, 0);
+                        fileContentToEncrypt = new Uint8Array([...prefix, ...fileContent]);
+
+                        filename = Base64.fromUint8Array(nacl.randomBytes(6));
+                        flags.push('filename-preappend');
+                    }
+
+                    // Schema 4: `zipindex` flag
+                    if (properties.asZipIndex) {
+                        flags.push('zipindex');
+                    }
         
                     // 执行文件加密操作
-                    const encryptedData = encryptFile(fileContent, key, nonce, alg);
+                    const encryptedData = encryptFile(fileContentToEncrypt, key, nonce, alg);
                     const saltedOriginalContent = new Uint8Array([...fileContent, ...salt]);
         
                     // 生成 meta
                     const meta = {
-                        schema: 3,
+                        schema: 4,
                         alg,
                         size: file.size,
                         filename: Base64.encode(filename),
@@ -82,6 +99,7 @@
                             name: 's7c7icu:postappend-v0',
                             salt: Base64.fromUint8Array(salt),
                         },
+                        flags,
                     };
         
                     // Upload Data
@@ -186,6 +204,16 @@
         const hashArray = Array.from(new Uint8Array(hashBuffer));
         const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
         return hashHex;
+    }
+
+    /**
+     * @param {Uint8Array} u8array 
+     * @param {number} value 
+     * @param {number} offset 
+     */
+    function setInt16(u8array, value, offset) {
+        // Big Endian
+        new DataView(u8array.buffer, offset, 2).setInt16(0, value);
     }
 
     return {

@@ -244,7 +244,7 @@
      * @returns {DataView}
      */
     function readInt16(u8array) {
-        // Little Endian
+        // Big Endian
         return new DataView(u8array.buffer, 0, 4).getInt16();
     }
 
