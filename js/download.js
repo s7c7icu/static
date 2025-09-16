@@ -6,7 +6,7 @@
             require('js-base64'),
             require('tweetnacl'),
             require('crypto-js'),
-            requier('jszip'),
+            require('jszip'),
         );
     } else if (typeof define === 'function' && define.amd) {
         // AMD 环境（如 RequireJS）
