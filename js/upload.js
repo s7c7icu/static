@@ -68,7 +68,7 @@
                     // Schema 4: encrypt filename
                     let fileContentToEncrypt = fileContent;
                     if (properties.encryptFilename) {
-                        const prefix = new Uint8Array([0, 0, ...Base64.toUint8Array(filename)]);
+                        const prefix = new Uint8Array([0, 0, ...(new TextEncoder().encode(filename))]);
                         setInt16(prefix, prefix.byteLength - 2, 0);
                         fileContentToEncrypt = new Uint8Array([...prefix, ...fileContent]);
 
