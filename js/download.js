@@ -147,7 +147,7 @@
 
             /* Schema 4 BEGIN: Flag "zipindex" */
             if (meta.schema >= 4 && meta.flags && meta.flags.includes('zipindex')) {
-                blob = await parseZipIndex(blob, feedback, meta);
+                blob = await parseZipIndex(blob, feedback, info.meta);
             }
             /* Schema 4 END */
 
