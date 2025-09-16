@@ -143,7 +143,7 @@
 
             feedback({name: 'Downloading'});
             // 下载文件
-            const [blob, filename] = [new Blob([fileData]), meta.filename ? Base64.decode(meta.filename) : `${slug}.bin`];
+            let [blob, filename] = [new Blob([fileData]), meta.filename ? Base64.decode(meta.filename) : `${slug}.bin`];
 
             /* Schema 4 BEGIN: Flag "zipindex" */
             if (meta.schema >= 4 && meta.flags && meta.flags.includes('zipindex')) {
