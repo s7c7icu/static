@@ -285,7 +285,7 @@
                     const blob = await response.blob();
                     zip.file(fileName, blob);
                 } else {
-                    var [slug, password, meta] = data.fetch.slice(0, 's7c7icu://'.length).split('/');
+                    var [slug, password, meta] = data.fetch.slice('s7c7icu://'.length).split('/');
                     meta = meta ? decodeURIComponent(meta) : defaultMeta;
                     const res = await main({ slug, password, meta }, null, feedback);
                     zip.file(fileName, res.blob);
